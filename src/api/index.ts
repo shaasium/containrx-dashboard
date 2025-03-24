@@ -15,3 +15,16 @@ export const signIn = async (email: string, password: string) => {
     return { err, data: null };
   }
 };
+
+export const listImages = async (token: string) => {
+  try {
+    const { data } = await containrxApi.get("/image/list", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};

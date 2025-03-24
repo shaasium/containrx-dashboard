@@ -11,24 +11,40 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/providers/AuthProvider";
 import loginValidator from "@/validators/loginValidator";
 import { useFormik } from "formik";
 import Image from "next/image";
+import { redirect, useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
+  const { user, setUser } = useAuth();
+
   const { errors, values, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: { email: "", password: "" },
     onSubmit: async (values) => {
       const { data, err } = await signIn(values.email, values.password);
-      if(err) console.log(err);
+      if (err) {
+        console.log(err);
+        return;
+      }
 
-      
-      
+      setUser({ email: values.email, token: data.token });
+
+      localStorage.setItem(
+        "containrx-user",
+        JSON.stringify({ token: data.token, email: values.email })
+      );
+
+      router.replace("/");
     },
     validateOnBlur: false,
     validateOnChange: false,
     validationSchema: loginValidator,
   });
+
+  if (user.token) return redirect("/")
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-neutral-50">
