@@ -28,3 +28,18 @@ export const listImages = async (token: string) => {
     return { err, data: null };
   }
 };
+
+export const pullImage = async (token: string, image: string, tag: string) => {
+  try {
+    console.log(token, image, tag);
+
+    const { data } = await containrxApi.post(`/image/pull/${image}:${tag}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};
