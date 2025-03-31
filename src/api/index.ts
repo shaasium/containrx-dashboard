@@ -31,9 +31,20 @@ export const listImages = async (token: string) => {
 
 export const pullImage = async (token: string, image: string, tag: string) => {
   try {
-    console.log(token, image, tag);
+    const { data } = await containrxApi.get(`/image/pull/${image}:${tag}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};
 
-    const { data } = await containrxApi.post(`/image/pull/${image}:${tag}`, {
+export const removeImage = async (token: string, imageId: string) => {
+  try {
+    const { data } = await containrxApi.delete(`/image/remove/${imageId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

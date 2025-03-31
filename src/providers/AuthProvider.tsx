@@ -10,8 +10,6 @@ import {
   useState,
 } from "react";
 
-import { Triangle } from "react-loader-spinner";
-
 const Context = createContext<{
   user: User;
   setUser: Dispatch<SetStateAction<User>>;
@@ -21,29 +19,16 @@ const Context = createContext<{
 });
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User>({ email: "", token: "" });
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User>({ email: "", token: "" });
 
   useEffect(() => {
-    const containrxUser = localStorage.getItem("containrx-user");
-    if (containrxUser) setUser(JSON.parse(containrxUser));
+    const userExists = localStorage.getItem("containrx-user");
+    if (userExists) setUser(JSON.parse(userExists));
     setIsLoading(false);
   }, []);
 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Triangle
-          visible={true}
-          height="80"
-          width="80"
-          color="dodgerblue"
-          ariaLabel="triangle-loading"
-          wrapperStyle={{}}
-          wrapperClass=""
-        />
-      </div>
-    );
+  if (isLoading) return <p>Loading</p>;
 
   return (
     <Context.Provider value={{ user, setUser }}>{children}</Context.Provider>
