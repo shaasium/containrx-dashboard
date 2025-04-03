@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 
 import { FaRegTrashAlt } from "react-icons/fa";
-import { CiPlay1 } from "react-icons/ci";
 
 import { useEffect, useState } from "react";
 
@@ -30,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFormik } from "formik";
 import imagePullValidator from "@/validators/imagePullValidator";
+import CreateContainerButton from "./CreateContainerButton";
 
 const ImageTable = () => {
   const { user } = useAuth();
@@ -150,109 +150,38 @@ const ImageTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {images?.map((image) => (
-              <TableRow key={image.Id}>
-                <TableCell className="text-center">
-                  {image.RepoTags[0].split(":")[0]}
-                </TableCell>
-                <TableCell className="text-center ">
-                  {image.RepoTags[0].split(":")[1]}
-                </TableCell>
-                <TableCell className="text-center ">
-                  {image.Id.split(":")[1].slice(0, 12)}
-                </TableCell>
-                <TableCell className="text-center ">
-                  {new Date(image.Created * 1000).toLocaleDateString()}
-                </TableCell>
-                <TableCell className="text-center ">
-                  {(image.Size / (1024 * 1024)).toFixed(2)} MB
-                </TableCell>
-                <TableCell className="text-center">
-                  <Dialog>
-                    <DialogTrigger asChild className="cursor-pointer">
-                      <Button variant="outline">
-                        <CiPlay1 className="hover:text-green-700 cursor-pointer" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <form>
-                        <DialogHeader>
-                          <DialogTitle>Create Container</DialogTitle>
-                        </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">
-                              Name
-                            </Label>
-                            <Input
-                              id="name"
-                              name="name"
-                              placeholder="Enter Container Name (optional)"
-                              className="col-span-3"
-                              value={values.name}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                            />
-                          </div>
+            {images?.map((image) => {
+              const imageName = image.RepoTags[0].split(":")[0];
+              const imageTag = image.RepoTags[0].split(":")[1];
 
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="cmd" className="text-right">
-                              Command
-                            </Label>
-                            <Input
-                              id="cmd"
-                              name="cmd"
-                              placeholder="Enter Command (optional)"
-                              className="col-span-3"
-                              value={values.name}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                            />
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-sm">Port Mappings</span>
-                            <Button variant="outline" className="cursor-pointer">add port</Button>
-                          </div>
-
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Input
-                              id="cmd"
-                              name="cmd"
-                              placeholder="Host Port"
-                              className="col-span-2"
-                              value={values.name}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                            />
-                            <Input
-                              id="cmd"
-                              name="cmd"
-                              placeholder="Container Port"
-                              className="col-span-2"
-                              value={values.name}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                            />
-                          </div>
-                        </div>
-                        <DialogFooter>
-                          <Button type="submit" className="cursor-pointer">
-                            Start Container
-                          </Button>
-                        </DialogFooter>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </TableCell>
-                <TableCell className="text-center">
-                  <FaRegTrashAlt
-                    onClick={() => removeImageFunc(image.Id)}
-                    className="hover:text-red-700 cursor-pointer"
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+              return (
+                <TableRow key={image.Id}>
+                  <TableCell className="text-center">{imageName}</TableCell>
+                  <TableCell className="text-center ">{imageTag}</TableCell>
+                  <TableCell className="text-center ">
+                    {image.Id.split(":")[1].slice(0, 12)}
+                  </TableCell>
+                  <TableCell className="text-center ">
+                    {new Date(image.Created * 1000).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-center ">
+                    {(image.Size / (1024 * 1024)).toFixed(2)} MB
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <CreateContainerButton
+                      imageName={imageName}
+                      imageTag={imageTag}
+                    />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <FaRegTrashAlt
+                      onClick={() => removeImageFunc(image.Id)}
+                      className="hover:text-red-700 cursor-pointer"
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
