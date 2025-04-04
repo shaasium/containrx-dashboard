@@ -1,3 +1,4 @@
+import { createContainer } from "@/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,13 +11,20 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/providers/AuthProvider";
+import createContainerValidator from "@/validators/createContainerValidator";
 import { useFormik } from "formik";
+import { useState } from "react";
 import { CiPlay1 } from "react-icons/ci";
 
 const CreateContainerButton: React.FC<{
   imageName: string;
   imageTag: string;
 }> = ({ imageName, imageTag }) => {
+  const { user } = useAuth();
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const { values, handleBlur, handleChange, handleSubmit, setFieldValue } =
     useFormik<{
       name: string;
@@ -30,16 +38,29 @@ const CreateContainerButton: React.FC<{
       },
       validateOnBlur: false,
       validateOnChange: false,
-      // validationSchema: imagePullValidator,
-      onSubmit: (values) => {
-        console.log(values);
+      validationSchema: createContainerValidator,
+      onSubmit: async (values) => {
+        const { data, err } = await createContainer(user.token, {
+          imageName,
+          imageTag,
+          ...values,
+        });
+
+        if (err) {
+          console.log(err);
+          return;
+        }
+
+        setIsDialogOpen(false);
+
+        console.log(data);
       },
     });
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild className="cursor-pointer">
-        <Button variant="outline">
+        <Button onClick={() => setIsDialogOpen(true)} variant="outline">
           <CiPlay1 className="hover:text-green-700 cursor-pointer" />
         </Button>
       </DialogTrigger>
@@ -103,20 +124,20 @@ const CreateContainerButton: React.FC<{
               return (
                 <div key={id} className="grid grid-cols-4 items-center gap-4">
                   <Input
-                    id={`portMappings.${id}.containerPort`}
-                    name={`portMappings.${id}.containerPort`}
+                    id={`portMappings.${id}.hostPort`}
+                    name={`portMappings.${id}.hostPort`}
                     placeholder="Host Port"
                     className="col-span-2"
-                    value={containerPort}
+                    value={hostPort}
                     onBlur={handleBlur}
                     onChange={handleChange}
                   />
                   <Input
-                    id={`portMappings.${id}.hostPort`}
-                    name={`portMappings.${id}.hostPort`}
+                    id={`portMappings.${id}.containerPort`}
+                    name={`portMappings.${id}.containerPort`}
                     placeholder="Container Port"
                     className="col-span-2"
-                    value={hostPort}
+                    value={containerPort}
                     onBlur={handleBlur}
                     onChange={handleChange}
                   />

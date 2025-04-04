@@ -54,3 +54,29 @@ export const removeImage = async (token: string, imageId: string) => {
     return { err, data: null };
   }
 };
+
+export const listContainers = async (token: string) => {
+  try {
+    const { data } = await containrxApi.get("/container/list", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};
+
+export const createContainer = async (token: string, body: object) => {
+  try {
+    const { data } = await containrxApi.post("/container/create", body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};

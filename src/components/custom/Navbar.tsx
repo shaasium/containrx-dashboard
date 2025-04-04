@@ -15,7 +15,7 @@ const Navbar = () => {
           <FaLayerGroup /> <span>Images</span>
         </Link>
         <Link
-          href="/"
+          href="/container"
           className="font-medium flex items-center space-x-2 hover:bg-gray-50 px-4 py-2 rounded-sm"
         >
           <LuContainer /> <span>Containers</span>
