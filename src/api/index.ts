@@ -80,3 +80,71 @@ export const createContainer = async (token: string, body: object) => {
     return { err, data: null };
   }
 };
+
+export const pauseContainer = async (token: string, containerId: string) => {
+  try {
+    const { data } = await containrxApi.put(
+      "/container/pause",
+      { containerId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};
+
+export const unpauseContainer = async (token: string, containerId: string) => {
+  try {
+    const { data } = await containrxApi.put(
+      "/container/unpause",
+      { containerId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};
+
+export const stopContainer = async (token: string, containerId: string) => {
+  try {
+    const { data } = await containrxApi.put(
+      "/container/stop",
+      { containerId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};
+
+export const resumeContainer = async (token: string, containerId: string) => {
+  try {
+    const { data } = await containrxApi.put(
+      "/container/resume",
+      { containerId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};

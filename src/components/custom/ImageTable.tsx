@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import { useFormik } from "formik";
 import imagePullValidator from "@/validators/imagePullValidator";
 import CreateContainerButton from "./CreateContainerButton";
+import { triggerToast } from "@/utils/triggerToast";
 
 const ImageTable = () => {
   const { user } = useAuth();
@@ -66,7 +67,8 @@ const ImageTable = () => {
       return;
     }
 
-    console.log(data);
+    triggerToast(`Image with id: ${data.imageId} deleted`)
+    
     refetch((prev) => prev + 1);
   };
 

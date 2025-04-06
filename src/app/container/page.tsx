@@ -12,22 +12,93 @@ import {
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/providers/AuthProvider";
-import { listContainers } from "@/api";
+import {
+  listContainers,
+  pauseContainer,
+  resumeContainer,
+  stopContainer,
+  unpauseContainer,
+} from "@/api";
 
 import Navbar from "@/components/custom/Navbar";
 
+import { MdOutlineRestartAlt } from "react-icons/md";
+import { FaStop } from "react-icons/fa";
+import { FaPause } from "react-icons/fa";
+import { MdNotStarted } from "react-icons/md";
+
+import { Button } from "@/components/ui/button";
+import { triggerToast } from "@/utils/triggerToast";
+
 const Page = () => {
   const { user } = useAuth();
-  const [containers, setContainers] = useState();
+  const [containers, setContainers] = useState<DockerContainer[]>([]);
   const [fetchKey, refetch] = useState(0);
 
   useEffect(() => {
     listContainers(user.token)
-      .then((res) => setContainers(() => res.data.containers))
+      .then((res) => {
+        console.log(res.data.containers);
+
+        setContainers(() => res.data.containers);
+      })
       .catch((err) => {
         console.log(err);
       });
   }, [user.token, fetchKey]);
+
+  const pauseContainerFunc = (containerId: string) => {
+    triggerToast(`pausing container ${containerId.slice(0, 12)}`);
+    pauseContainer(user.token, containerId)
+      .then((res) => {
+        console.log(res.data, 123);
+
+        triggerToast(`Container ${res.data.slice(0, 12)} paused`);
+
+        refetch((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const unpauseContainerFunc = (containerId: string) => {
+    triggerToast(`unpausing container ${containerId.slice(0, 12)}`);
+    unpauseContainer(user.token, containerId)
+      .then((res) => {
+        triggerToast(`Container ${res.data.slice(0, 12)} unpaused`);
+        refetch((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const stopContainerFunc = (containerId: string) => {
+    triggerToast(`stopping container ${containerId.slice(0, 12)}`);
+    stopContainer(user.token, containerId)
+      .then((res) => {
+        console.log(res.data);
+
+        triggerToast(`Container ${res.data.slice(0, 12)} stopped`);
+        refetch((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const resumeContainerFunc = (containerId: string) => {
+    triggerToast(`resuming container ${containerId.slice(0, 12)}`);
+    resumeContainer(user.token, containerId)
+      .then((res) => {
+        triggerToast(`Container ${res.data.slice(0, 12)} resumed`);
+        refetch((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div>
@@ -47,12 +118,14 @@ const Page = () => {
                 <TableHead className="text-center">Ports</TableHead>
                 <TableHead className="text-center">Status</TableHead>
                 <TableHead className="text-center">State</TableHead>
+                <TableHead className="text-center"></TableHead>
+                <TableHead className="text-center"></TableHead>
+                <TableHead className="text-center"></TableHead>
+                <TableHead className="text-center"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {containers?.map((container, id) => {
-                console.log(container);
-
                 return (
                   <TableRow key={id}>
                     <TableCell className="text-center">
@@ -68,14 +141,64 @@ const Page = () => {
                       {container.Id.slice(0, 12)}
                     </TableCell>
                     <TableCell className="text-center ">
-                      {container.Ports[0].IP}:{container.Ports[0].PublicPort}{" "}
-                      -&gt; {container.Ports[0].PrivatePort}
+                      {container.Ports.length === 0
+                        ? "-"
+                        : `${container?.Ports[0]?.IP} : ${container?.Ports[0]?.PublicPort} -> ${container?.Ports[0]?.PrivatePort}`}
                     </TableCell>
                     <TableCell className="text-center">
                       {container.Status}
                     </TableCell>
                     <TableCell className="text-center">
                       {container.State}
+                    </TableCell>
+
+                    <TableCell className="">
+                      <Button
+                        onClick={() => resumeContainerFunc(container.Id)}
+                        variant="outline"
+                        disabled={
+                          container.State === "running" ||
+                          container.State == "paused"
+                        }
+                      >
+                        <MdOutlineRestartAlt />
+                      </Button>
+                    </TableCell>
+
+                    <TableCell className="">
+                      <Button
+                        onClick={() => stopContainerFunc(container.Id)}
+                        variant="outline"
+                        disabled={container.State == "exited"}
+                      >
+                        <FaStop />
+                      </Button>
+                    </TableCell>
+
+                    <TableCell className="">
+                      <Button
+                        onClick={() => pauseContainerFunc(container.Id)}
+                        variant="outline"
+                        disabled={
+                          container.State === "paused" ||
+                          container.State == "exited"
+                        }
+                      >
+                        <FaPause />
+                      </Button>
+                    </TableCell>
+
+                    <TableCell className="">
+                      <Button
+                        onClick={() => unpauseContainerFunc(container.Id)}
+                        variant="outline"
+                        disabled={
+                          container.State === "running" ||
+                          container.State == "exited"
+                        }
+                      >
+                        <MdNotStarted />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );
