@@ -148,3 +148,20 @@ export const resumeContainer = async (token: string, containerId: string) => {
     return { err, data: null };
   }
 };
+
+export const removeContainer = async (token: string, containerId: string) => {
+  try {
+    const { data } = await containrxApi.put(
+      "/container/remove",
+      { containerId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return { data, err: null };
+  } catch (err) {
+    return { err, data: null };
+  }
+};

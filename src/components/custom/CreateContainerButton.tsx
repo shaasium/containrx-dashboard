@@ -30,11 +30,13 @@ const CreateContainerButton: React.FC<{
       name: string;
       cmd: string;
       portMappings: { hostPort: string; containerPort: string }[];
+      env: { key: string; value: string }[];
     }>({
       initialValues: {
         name: "",
         cmd: "",
         portMappings: [],
+        env: [],
       },
       validateOnBlur: false,
       validateOnChange: false,
@@ -145,8 +147,48 @@ const CreateContainerButton: React.FC<{
               );
             })}
           </div>
+
+          <div className="flex items-center justify-between mb-4">
+            <span className="font-medium text-sm">Env Variables</span>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                setFieldValue("env", [...values.env, { key: "", value: "" }]);
+              }}
+              variant="outline"
+              className="cursor-pointer"
+            >
+              add env vars
+            </Button>
+          </div>
+
+          {values.env.map(({ key, value }, id) => {
+            return (
+              <div key={id} className="grid grid-cols-4 items-center gap-4">
+                <Input
+                  id={`env.${id}.key`}
+                  name={`env.${id}.key`}
+                  placeholder="Key"
+                  className="col-span-2"
+                  value={key}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+                <Input
+                  id={`env.${id}.value`}
+                  name={`env.${id}.value`}
+                  placeholder="Value"
+                  className="col-span-2"
+                  value={value}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </div>
+            );
+          })}
+
           <DialogFooter>
-            <Button type="submit" className="cursor-pointer">
+            <Button type="submit" className="cursor-pointer mt-4">
               Start Container
             </Button>
           </DialogFooter>

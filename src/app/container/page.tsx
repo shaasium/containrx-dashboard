@@ -15,6 +15,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import {
   listContainers,
   pauseContainer,
+  removeContainer,
   resumeContainer,
   stopContainer,
   unpauseContainer,
@@ -26,6 +27,7 @@ import { MdOutlineRestartAlt } from "react-icons/md";
 import { FaStop } from "react-icons/fa";
 import { FaPause } from "react-icons/fa";
 import { MdNotStarted } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 
 import { Button } from "@/components/ui/button";
 import { triggerToast } from "@/utils/triggerToast";
@@ -100,6 +102,18 @@ const Page = () => {
       });
   };
 
+  const removeContainerFunc = (containerId: string) => {
+    triggerToast(`removeing container ${containerId.slice(0, 12)}`);
+    removeContainer(user.token, containerId)
+      .then((res) => {
+        triggerToast(`Container ${res.data.slice(0, 12)} removed`);
+        refetch((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       <Navbar />
@@ -118,6 +132,7 @@ const Page = () => {
                 <TableHead className="text-center">Ports</TableHead>
                 <TableHead className="text-center">Status</TableHead>
                 <TableHead className="text-center">State</TableHead>
+                <TableHead className="text-center"></TableHead>
                 <TableHead className="text-center"></TableHead>
                 <TableHead className="text-center"></TableHead>
                 <TableHead className="text-center"></TableHead>
@@ -198,6 +213,15 @@ const Page = () => {
                         }
                       >
                         <MdNotStarted />
+                      </Button>
+                    </TableCell>
+
+                    <TableCell>
+                      <Button
+                        onClick={() => removeContainerFunc(container.Id)}
+                        variant="outline"
+                      >
+                        <MdDelete />
                       </Button>
                     </TableCell>
                   </TableRow>
