@@ -48,6 +48,8 @@ const ImageTable = () => {
   }, [user.token, fetchKey]);
 
   const pullImageFunc = async (values: { name: string; tag: string }) => {
+    triggerToast(`Pulling image: ${values.name} `);
+
     const { data, err } = await pullImage(user.token, values.name, values.tag);
 
     if (err) {
@@ -55,8 +57,10 @@ const ImageTable = () => {
       return;
     }
 
-    console.log(data);
+    triggerToast(data.message);
+
     refetch((prev) => prev + 1);
+
     setIsDialogOpen(false);
   };
 
@@ -67,8 +71,8 @@ const ImageTable = () => {
       return;
     }
 
-    triggerToast(`Image with id: ${data.imageId} deleted`)
-    
+    triggerToast(`Image with id: ${data.imageId} deleted`);
+
     refetch((prev) => prev + 1);
   };
 

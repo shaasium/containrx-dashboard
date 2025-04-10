@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/providers/AuthProvider";
+import { triggerToast } from "@/utils/triggerToast";
 import createContainerValidator from "@/validators/createContainerValidator";
 import { useFormik } from "formik";
 import { useState } from "react";
@@ -42,6 +43,9 @@ const CreateContainerButton: React.FC<{
       validateOnChange: false,
       validationSchema: createContainerValidator,
       onSubmit: async (values) => {
+        
+        triggerToast(`Creating ${imageName}:${imageTag} container`);
+
         const { data, err } = await createContainer(user.token, {
           imageName,
           imageTag,
@@ -55,7 +59,7 @@ const CreateContainerButton: React.FC<{
 
         setIsDialogOpen(false);
 
-        console.log(data);
+        triggerToast(data.message)
       },
     });
 
