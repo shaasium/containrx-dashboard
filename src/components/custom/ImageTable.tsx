@@ -41,7 +41,7 @@ const ImageTable = () => {
 
   useEffect(() => {
     listImages(user.token)
-      .then((res) => setImages(() => res.data.images))
+      .then((res) => setImages(() => res.data?.images))
       .catch((err) => {
         console.log(err);
       });
