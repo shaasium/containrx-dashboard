@@ -16,7 +16,6 @@ import loginValidator from "@/validators/loginValidator";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { triggerToast } from "@/utils/triggerToast";
 
 const LoginCard = () => {
@@ -28,7 +27,9 @@ const LoginCard = () => {
     onSubmit: async (values) => {
       const { data, err } = await signIn(values.email, values.password);
       if (err) {
-        triggerToast(err.response.data.err);
+        triggerToast(
+          (err as { response: { data: { err: string } } }).response.data.err
+        );
         return;
       }
       localStorage.setItem(
