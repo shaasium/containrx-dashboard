@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const containrxApi = axios.create({
-  baseURL: `http://localhost:5000/api`,
+  baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`,
 });
 
 export const signIn = async (email: string, password: string) => {

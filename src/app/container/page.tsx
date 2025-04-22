@@ -40,8 +40,7 @@ const Page = () => {
   useEffect(() => {
     listContainers(user.token)
       .then((res) => {
-        console.log(res.data.containers);
-
+        console.log(res.data.containers)
         setContainers(() => res.data.containers);
       })
       .catch((err) => {
