@@ -15,6 +15,8 @@ COPY --from=builder /app/yarn.lock ./yarn.lock
 
 RUN yarn install --frozen-lockfile --production=true --no-cache
 
+RUN yarn cache clear
+
 EXPOSE 3000
 
 CMD ["yarn", "start"]
