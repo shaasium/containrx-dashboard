@@ -1,22 +1,17 @@
-FROM node:iron-alpine3.21 AS builder
+FROM node:alpine3.21 AS builder
 WORKDIR /app
 COPY ./package.json ./yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY . .
 RUN yarn build
 
-FROM node:iron-alpine3.21 AS runner
+FROM node:alpine3.21 AS runner
 WORKDIR /app
 
-COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/yarn.lock ./yarn.lock
-
-RUN yarn install --frozen-lockfile --production=true --no-cache
-
-RUN yarn cache clean
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["node", "server.js"]
